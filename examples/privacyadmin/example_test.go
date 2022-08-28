@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/examples/privacyadmin/viewer"
 
 	"entgo.io/ent/examples/privacyadmin/ent"
-	"entgo.io/ent/examples/privacyadmin/ent/privacy"
+	"entgo.io/ent/examples/privacyadmin/ent/entprivacy"
 	_ "entgo.io/ent/examples/privacyadmin/ent/runtime"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -42,7 +42,7 @@ func Example_PrivacyAdmin() {
 func Do(ctx context.Context, client *ent.Client) error {
 	// Expect operation to fail, because viewer-context
 	// is missing (first mutation rule check).
-	if err := client.User.Create().Exec(ctx); !errors.Is(err, privacy.Deny) {
+	if err := client.User.Create().Exec(ctx); !errors.Is(err, entprivacy.Deny) {
 		return fmt.Errorf("expect operation to fail, but got %w", err)
 	}
 	// Apply the same operation with "Admin" role.
@@ -52,7 +52,7 @@ func Do(ctx context.Context, client *ent.Client) error {
 	}
 	// Apply the same operation with "ViewOnly" role.
 	viewOnly := viewer.NewContext(ctx, viewer.UserViewer{Role: viewer.View})
-	if err := client.User.Create().Exec(viewOnly); !errors.Is(err, privacy.Deny) {
+	if err := client.User.Create().Exec(viewOnly); !errors.Is(err, entprivacy.Deny) {
 		return fmt.Errorf("expect operation to fail, but got %w", err)
 	}
 	// Allow all viewers to query users.
@@ -62,7 +62,7 @@ func Do(ctx context.Context, client *ent.Client) error {
 		fmt.Println(count)
 	}
 	// Bind a privacy decision to the context (bypass all other rules).
-	allow := privacy.DecisionContext(ctx, privacy.Allow)
+	allow := entprivacy.DecisionContext(ctx, entprivacy.Allow)
 	if err := client.User.Create().Exec(allow); err != nil {
 		return fmt.Errorf("expect operation to pass, but got %w", err)
 	}

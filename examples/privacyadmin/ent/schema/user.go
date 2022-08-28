@@ -6,7 +6,7 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/examples/privacyadmin/ent/privacy"
+	"entgo.io/ent/examples/privacyadmin/ent/entprivacy"
 	"entgo.io/ent/examples/privacyadmin/rule"
 	"entgo.io/ent/schema/field"
 )
@@ -26,14 +26,14 @@ func (User) Fields() []ent.Field {
 
 // Policy defines the privacy policy of the User.
 func (User) Policy() ent.Policy {
-	return privacy.Policy{
-		Mutation: privacy.MutationPolicy{
+	return entprivacy.Policy{
+		Mutation: entprivacy.MutationPolicy{
 			rule.DenyIfNoViewer(),
 			rule.AllowIfAdmin(),
-			privacy.AlwaysDenyRule(),
+			entprivacy.AlwaysDenyRule(),
 		},
-		Query: privacy.QueryPolicy{
-			privacy.AlwaysAllowRule(),
+		Query: entprivacy.QueryPolicy{
+			entprivacy.AlwaysAllowRule(),
 		},
 	}
 }
