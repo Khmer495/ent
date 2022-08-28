@@ -11,7 +11,7 @@ import (
 	"log"
 
 	"entgo.io/ent/examples/privacytenant/ent"
-	"entgo.io/ent/examples/privacytenant/ent/privacy"
+	"entgo.io/ent/examples/privacytenant/ent/entprivacy"
 	_ "entgo.io/ent/examples/privacytenant/ent/runtime"
 	"entgo.io/ent/examples/privacytenant/ent/user"
 	"entgo.io/ent/examples/privacytenant/viewer"
@@ -26,14 +26,14 @@ func Example_CreateTenants() {
 
 	// Expect operation to fail in case viewer-context is missing.
 	// First mutation privacy policy rule defined in BaseMixin.
-	if err := client.Tenant.Create().Exec(ctx); !errors.Is(err, privacy.Deny) {
+	if err := client.Tenant.Create().Exec(ctx); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect tenant creation to fail, but got:", err)
 	}
 
 	// Expect operation to fail in case the ent.User in the viewer-context
 	// is not an admin user. Privacy policy defined in the Tenant schema.
 	viewCtx := viewer.NewContext(ctx, viewer.UserViewer{Role: viewer.View})
-	if err := client.Tenant.Create().Exec(viewCtx); !errors.Is(err, privacy.Deny) {
+	if err := client.Tenant.Create().Exec(viewCtx); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect tenant creation to fail, but got:", err)
 	}
 
@@ -86,7 +86,7 @@ func Example_TenantView() {
 	fmt.Println(labUsers)
 
 	// Query users should fail in case viewer-context is missing.
-	if _, err := client.User.Query().Count(ctx); !errors.Is(err, privacy.Deny) {
+	if _, err := client.User.Query().Count(ctx); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect user query to fail, but got:", err)
 	}
 
@@ -120,7 +120,7 @@ func Example_TenantView() {
 	fmt.Println(client.User.Query().CountX(hubView)) // 2
 
 	// Unlike queries, admin users are not allowed to mutate tenant specific data.
-	if err := client.User.DeleteOne(hubUsers[0]).Exec(adminCtx); !errors.Is(err, privacy.Deny) {
+	if err := client.User.DeleteOne(hubUsers[0]).Exec(adminCtx); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect user deletion to fail, but got:", err)
 	}
 
@@ -168,10 +168,10 @@ func Example_DenyMismatchedTenants() {
 
 	// Expect operation to fail as the DenyMismatchedTenants rule makes
 	// sure the group and the users are connected to the same tenant.
-	if err := client.Group.Create().SetName("entgo.io").SetTenant(hub).AddUsers(labUsers...).Exec(hubView); !errors.Is(err, privacy.Deny) {
+	if err := client.Group.Create().SetName("entgo.io").SetTenant(hub).AddUsers(labUsers...).Exec(hubView); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect operation to fail, since labUsers are not connected to the same tenant")
 	}
-	if err := client.Group.Create().SetName("entgo.io").SetTenant(hub).AddUsers(hubUsers[0], labUsers[0]).Exec(hubView); !errors.Is(err, privacy.Deny) {
+	if err := client.Group.Create().SetName("entgo.io").SetTenant(hub).AddUsers(hubUsers[0], labUsers[0]).Exec(hubView); !errors.Is(err, entprivacy.Deny) {
 		log.Fatal("expect operation to fail, since labUsers[0] is not connected to the same tenant")
 	}
 	// Expect mutation to pass as all users belong to the same tenant as the group.

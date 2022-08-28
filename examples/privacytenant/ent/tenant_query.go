@@ -266,6 +266,7 @@ func (tq *TenantQuery) Clone() *TenantQuery {
 //		GroupBy(tenant.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
+//
 func (tq *TenantQuery) GroupBy(field string, fields ...string) *TenantGroupBy {
 	grbuild := &TenantGroupBy{config: tq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -292,6 +293,7 @@ func (tq *TenantQuery) GroupBy(field string, fields ...string) *TenantGroupBy {
 //	client.Tenant.Query().
 //		Select(tenant.FieldName).
 //		Scan(ctx, &v)
+//
 func (tq *TenantQuery) Select(fields ...string) *TenantSelect {
 	tq.fields = append(tq.fields, fields...)
 	selbuild := &TenantSelect{TenantQuery: tq}

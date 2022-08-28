@@ -6,8 +6,9 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/examples/privacytenant/ent/privacy"
+	"entgo.io/ent/examples/privacytenant/ent/entprivacy"
 	"entgo.io/ent/examples/privacytenant/rule"
+	"entgo.io/ent/privacy"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -47,7 +48,7 @@ func (Group) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			// Limit DenyMismatchedTenants only for
 			// Create operations
-			privacy.OnMutationOperation(
+			entprivacy.OnMutationOperation(
 				rule.DenyMismatchedTenants(),
 				ent.OpCreate,
 			),

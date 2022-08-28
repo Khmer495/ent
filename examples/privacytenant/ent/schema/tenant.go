@@ -6,8 +6,9 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/examples/privacytenant/ent/privacy"
+	"entgo.io/ent/examples/privacytenant/ent/entprivacy"
 	"entgo.io/ent/examples/privacytenant/rule"
+	"entgo.io/ent/privacy"
 	"entgo.io/ent/schema/field"
 )
 
@@ -38,7 +39,7 @@ func (Tenant) Policy() ent.Policy {
 			// For Tenant type, we only allow admin users to mutate
 			// the tenant information and deny otherwise.
 			rule.AllowIfAdmin(),
-			privacy.AlwaysDenyRule(),
+			entprivacy.AlwaysDenyRule(),
 		},
 	}
 }
